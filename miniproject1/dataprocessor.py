@@ -16,7 +16,6 @@ class DataProcessor:
         data_ROOT = netconfig.data_ROOT
 
         data_transforms = transforms.Compose([
-            transforms.Grayscale(),
             transforms.ToTensor(),
         ])
 
@@ -35,4 +34,3 @@ class DataProcessor:
         self.train_dataloader = DataLoader(self.train_data, shuffle=True, batch_size=batch_size)
         self.test_dataloader = DataLoader(self.test_data, batch_size=batch_size)
 
-        return self.train_dataloader, self.test_dataloader

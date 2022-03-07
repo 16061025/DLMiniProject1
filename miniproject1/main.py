@@ -12,11 +12,11 @@ def train(dataloader, model, loss_fn, optimizer):
     for batch, (x, y) in enumerate(dataloader):
         x = x.to(netconfig.device)
         y = y.to(netconfig.device)
-
+        print("forward")
         # forward
         y_predict = model(x)
         loss = loss_fn(y_predict, y)
-
+        print("bp")
         # bp
         optimizer.zero_grad()
         loss.backward()
@@ -31,8 +31,8 @@ def train(dataloader, model, loss_fn, optimizer):
             train_batch_loss.append(loss)
             train_batch_cnt += 1
 
-            axs['up'].plot(train_batch, train_batch_loss, color="blue")
-            plt.pause(0.001)
+            #axs['up'].plot(train_batch, train_batch_loss, color="blue")
+            #plt.pause(0.001)
             print(f"loss: {loss:>7f}  [{current:>5d}/{size:>5d}]")
 
 
@@ -65,8 +65,8 @@ def test(dataloader, model, loss_fn):
 
     print(f"Test Error: \n Accuracy: {(100 * correct):>0.1f}%, Avg loss: {test_loss:>8f} \n")
 
-
-train_dataloader, test_dataloader = dataprocessor.DataProcessor()
+dp = dataprocessor.DataProcessor()
+train_dataloader, test_dataloader = dp.train_dataloader, dp.test_dataloader
 
 model = ResNetmodel.model
 loss_fn = ResNetmodel.loss_fn

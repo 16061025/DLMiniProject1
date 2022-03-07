@@ -7,20 +7,31 @@ import numpy as np
 
 class BasicBlock(nn.Module):
 
-    def __init__(self, in_planes, planes, stride=1):
+    def __init__(self, in_planes, planes, stride=1, conv_kernel_size=3, skip_kernel_size=1):
         super(BasicBlock, self).__init__()
-        self.conv1 = nn.Conv2d(
-            in_planes, planes, kernel_size=3, stride=stride, padding=1, bias=False)
+        self.conv1 = nn.Conv2d(in_planes,
+                               planes,
+                               kernel_size=conv_kernel_size,
+                               stride=stride,
+                               padding=1,
+                               bias=False)
         self.bn1 = nn.BatchNorm2d(planes)
-        self.conv2 = nn.Conv2d(planes, planes, kernel_size=3,
-                               stride=1, padding=1, bias=False)
+        self.conv2 = nn.Conv2d(planes,
+                               planes,
+                               kernel_size=conv_kernel_size,
+                               stride=1,
+                               padding=1,
+                               bias=False)
         self.bn2 = nn.BatchNorm2d(planes)
 
         self.shortcut = nn.Sequential()
         if stride != 1 or in_planes != planes:
             self.shortcut = nn.Sequential(
-                nn.Conv2d(in_planes, planes,
-                          kernel_size=1, stride=stride, bias=False),
+                nn.Conv2d(in_planes,
+                          planes,
+                          kernel_size=skip_kernel_size,
+                          stride=stride,
+                          bias=False),
                 nn.BatchNorm2d(planes)
             )
 
@@ -34,58 +45,52 @@ class BasicBlock(nn.Module):
 
 
 class ResNet(nn.Module):
-    def __init__(self, block, num_blocks, num_classes=10):
+    def __init__(self, block, num_classes=10):
         super(ResNet, self).__init__()
-        self.in_planes = 64
+        self.in_planes = netconfig.C[0]
 
-        self.conv1 = nn.Conv2d(3, 64, kernel_size=3,
+        self.conv1 = nn.Conv2d(3, self.in_planes, kernel_size=3,
                                stride=1, padding=1, bias=False)
-        self.bn1 = nn.BatchNorm2d(64)
-        self.layer1 = self._make_layer(block, 64, num_blocks[0], stride=1)
-        self.layer2 = self._make_layer(block, 128, num_blocks[1], stride=2)
-        self.layer3 = self._make_layer(block, 256, num_blocks[2], stride=2)
-        self.layer4 = self._make_layer(block, 512, num_blocks[3], stride=2)
-        self.linear = nn.Linear(512, num_classes)
+        self.bn1 = nn.BatchNorm2d(netconfig.C[0])
 
-    def _make_layer(self, block, planes, num_blocks, stride):
+        res_layers = []
+        for i in range(0, netconfig.N):
+            if i == 0:
+                stride = 1
+            else:
+                stride = 2
+            layer = self._make_layer(block,
+                                     netconfig.C[i],
+                                     netconfig.B[i],
+                                     stride=stride,
+                                     conv_kernel_size=netconfig.F[i],
+                                     skip_kernel_size=netconfig.K[i])
+            res_layers.append(layer)
+        self.reslayer = nn.Sequential(*res_layers)
+        self.linear = nn.Linear(netconfig.C[-1], num_classes)
+
+
+    def _make_layer(self, block, planes, num_blocks, stride, conv_kernel_size=3, skip_kernel_size=1):
         strides = [stride] + [1]*(num_blocks-1)
         layers = []
         for stride in strides:
-            layers.append(block(self.in_planes, planes, stride))
+            newblock = block(self.in_planes, planes, stride, conv_kernel_size, skip_kernel_size)
+            layers.append(newblock)
             self.in_planes = planes
         return nn.Sequential(*layers)
 
     def forward(self, x):
+
         out = F.relu(self.bn1(self.conv1(x)))
-        out = self.layer1(out)
-        out = self.layer2(out)
-        out = self.layer3(out)
-        out = self.layer4(out)
-        out = F.avg_pool2d(out, 4)
+        out = self.reslayer(out)
+        out = F.avg_pool2d(out, netconfig.P)
         out = out.view(out.size(0), -1)
         out = self.linear(out)
         return out
 
 
-class NeuralNetwork(nn.Module):
-    def __init__(self):
-        super(NeuralNetwork, self).__init__()
-        self.flatten = nn.Flatten()
-        self.linear_relu_stack = nn.Sequential(
-            nn.Linear(32 * 32, 256), nn.ReLU(),
-            nn.Linear(256, 128), nn.ReLU(),
-            nn.Linear(128, 64), nn.ReLU(),
-            nn.Linear(64, 10)  # since there are 10 classes!
-        )
-
-    def forward(self, x):
-        x = self.flatten(x)
-        logits = self.linear_relu_stack(x)
-        return logits
-
-model = NeuralNetwork().to(netconfig.device)
-
+model = ResNet(BasicBlock).to(netconfig.device)
 
 loss_fn = nn.CrossEntropyLoss()
-optimizer = torch.optim.SGD(model.parameters(), lr=netconfig.lr)
+optimizer = torch.optim.Adam(model.parameters(), lr=netconfig.lr)
 
