@@ -7,20 +7,20 @@ import numpy as np
 
 class BasicBlock(nn.Module):
 
-    def __init__(self, in_planes, planes, stride=1, conv_kernel_size=3, skip_kernel_size=1):
+    def __init__(self, in_planes, planes, stride=1, conv_kernel_size=3, skip_kernel_size=1, padding=1):
         super(BasicBlock, self).__init__()
         self.conv1 = nn.Conv2d(in_planes,
                                planes,
                                kernel_size=conv_kernel_size,
                                stride=stride,
-                               padding=1,
+                               padding=padding,
                                bias=False)
         self.bn1 = nn.BatchNorm2d(planes)
         self.conv2 = nn.Conv2d(planes,
                                planes,
                                kernel_size=conv_kernel_size,
                                stride=1,
-                               padding=1,
+                               padding='same',
                                bias=False)
         self.bn2 = nn.BatchNorm2d(planes)
 
@@ -38,6 +38,7 @@ class BasicBlock(nn.Module):
     def forward(self, x):
         out = F.relu(self.bn1(self.conv1(x)))
         out = self.bn2(self.conv2(out))
+        #print(out.shape, self.shortcut(x).shape)
         out += self.shortcut(x)
         out = F.relu(out)
         return out
@@ -73,8 +74,13 @@ class ResNet(nn.Module):
     def _make_layer(self, block, planes, num_blocks, stride, conv_kernel_size=3, skip_kernel_size=1):
         strides = [stride] + [1]*(num_blocks-1)
         layers = []
-        for stride in strides:
-            newblock = block(self.in_planes, planes, stride, conv_kernel_size, skip_kernel_size)
+        for i in range(0, len(strides)):
+            stride = strides[i]
+            if i == 0 and strides[0] != 1:
+                padding = 1
+            else:
+                padding = 'same'
+            newblock = block(self.in_planes, planes, stride, conv_kernel_size, skip_kernel_size, padding)
             layers.append(newblock)
             self.in_planes = planes
         return nn.Sequential(*layers)
@@ -87,10 +93,4 @@ class ResNet(nn.Module):
         out = out.view(out.size(0), -1)
         out = self.linear(out)
         return out
-
-
-model = ResNet(BasicBlock).to(netconfig.device)
-
-loss_fn = nn.CrossEntropyLoss()
-optimizer = torch.optim.Adam(model.parameters(), lr=netconfig.lr)
 
