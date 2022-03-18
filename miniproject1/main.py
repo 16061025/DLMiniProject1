@@ -1,9 +1,13 @@
 import torch
 import matplotlib.pyplot as plt
+import sys
+import pickle
+
 
 import dataprocessor
 import ResNetmodel
 import netconfig
+import torchsummary
 
 def train(dataloader, model, loss_fn, optimizer):
     size = len(dataloader.dataset)
@@ -112,15 +116,32 @@ epochs = 50
 #
 # plt.ion()
 
+def count_parameters(model):
+    return sum(p.numel() for p in model.parameters() if p.requires_grad)
 
-for t in range(epochs):
-    print(f"Epoch {t+1}\n-------------------------------")
-    train(train_dataloader, model, loss_fn, optimizer)
-    test(test_dataloader, model, loss_fn)
-print("Done!")
+print("number of parameters", count_parameters(model))
+
+
+# torchsummary.summary(model, (3,32,32))
+
+f = open(sys.argv[1], 'rb')
+configs = pickle.load(f)
+config = configs[int(sys.argv[2])]
+netconfig.setconfig(config)
+while(True):
+    continue
+# for t in range(epochs):
+#     print(f"Epoch {t+1}\n-------------------------------")
+#     train(train_dataloader, model, loss_fn, optimizer)
+#     test(test_dataloader, model, loss_fn)
+# print("Done!")
 
 # plt.ioff()
 # plt.show()
+
+
+
+
 
 
 
