@@ -1,0 +1,10 @@
+command config
+N= 4
+B= [2 2 2 2]
+C1= 64
+F= [1 1 1 1]
+K= [-3, 1, 1, 1]
+P= 6
+number of parameters 1409098
+Epoch 1
+-------------------------------
