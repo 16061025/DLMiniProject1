@@ -41,5 +41,5 @@ class randomSearch():
         print("valid para count", valid_para_cnt)
         return
 
-rs = randomSearch()
-rs.getRandomConfigs(100000)
+#rs = randomSearch()
+#rs.getRandomConfigs(100000)

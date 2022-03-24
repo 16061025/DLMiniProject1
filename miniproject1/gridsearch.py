@@ -80,6 +80,6 @@ class gridSearch():
         with open('configs', 'wb') as f:
             pickle.dump(configs, f)
 
-gs = gridSearch()
-gs.getGridConfigs()
+#gs = gridSearch()
+#gs.getGridConfigs()
 

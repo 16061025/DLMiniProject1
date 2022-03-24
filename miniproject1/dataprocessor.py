@@ -8,6 +8,7 @@ import torchvision.datasets as datasets
 
 import netconfig
 import numpy as np
+import aug
 
 class DataProcessor:
 
@@ -31,6 +32,8 @@ class DataProcessor:
 
         batch_size = netconfig.batch_size
 
+        self.aug_train_data =  aug.augData()
         self.train_dataloader = DataLoader(self.train_data, shuffle=True, batch_size=batch_size)
+        self.train_aug_dataloader = DataLoader(self.aug_train_data, shuffle=True, batch_size=batch_size)
         self.test_dataloader = DataLoader(self.test_data, batch_size=batch_size)
 

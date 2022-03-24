@@ -21,8 +21,6 @@ def NBF2KP(N, B, F):
 
     P = int(width_out)
 
-    #print('K=',K)
-    #print('P=',P)
 
     return K, P
 
@@ -43,8 +41,6 @@ def setconfig(config):
     print('F=', F)
     print('K=', K)
     print('P=', P)
-
-
 
 # parameter size estimate
 #math
@@ -77,8 +73,6 @@ def my_count_para(N, C, B, F, K):
     total+=(C[-1]+1) * 10
     return total
 
-# print("my number of parameters", my_count_para())
-
 def verifyPara(N, C, B, F, K):
     width_in = 32
     for i in range(1, N):
@@ -104,16 +98,17 @@ batch_size = 64
 # learning rate
 lr = 0.001
 
-N = 6  # Residual Layers
+N = 3  # Residual Layers
 
-B = [3, 3, 3, 3, 3, 3]  # Residual blocks in Residual Layer i
+B = [4, 4, 1]  # Residual blocks in Residual Layer i
 
-C1 = 16
+C1 = 64
 
 C = C1 * (2**np.arange(0, N, 1))  # channels in Residual Layer i
 
-F = [5, 5, 5, 5, 5, 5]  # Conv. kernel size in Residual Layer i
+F = [5, 5, 1]  # Conv. kernel size in Residual Layer i
 
 # K Skip connection kernel size in Residual Layer i
 # P Average pool kernel size
-K, P = NBF2KP(N, B, F)
+K = [5,3,1]
+P = 8

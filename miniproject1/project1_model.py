@@ -1,9 +1,21 @@
 import torch
 import torch.nn as nn
-import netconfig
 import torch.nn.functional as F
-
+import torchsummary
 import numpy as np
+
+class config():
+    def __init__(self):
+        self.N = 3# Residual Layers
+        self.B = [4, 4, 1]  # Residual blocks in Residual Layer i
+        self.C1 = 64
+        self.C = self.C1 * (2 ** np.arange(0, self.N, 1))  # channels in Residual Layer i
+        self.F = [5, 5, 3]  # Conv. kernel size in Residual Layer i
+        self.K = [5, 3, 1] # K Skip connection kernel size in Residual Layer i
+        self.P = 8 # P Average pool kernel size
+        self.device = "cpu"
+
+netconfig = config()
 
 class BasicBlock(nn.Module):
 
@@ -93,4 +105,10 @@ class ResNet(nn.Module):
         out = out.view(out.size(0), -1)
         out = self.linear(out)
         return out
+
+def project1_model():
+    model = ResNet(BasicBlock).to(netconfig.device)
+    #torchsummary.summary(model, (3,32,32))
+    return model
+
 
