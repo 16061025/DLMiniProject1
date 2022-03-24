@@ -87,7 +87,7 @@ def verifyPara(N, C, B, F, K):
     return True
 
 #data set path
-data_ROOT = "D:/dataset"
+data_ROOT = "../dataset"
 
 # runtime device
 device = "cpu"

@@ -23,7 +23,7 @@ def augData():
     print("data augment ...")
     augmented_samples = []
     augmented_labels = []
-    for i in range(1,2):
+    for i in range(1,6):
         raw = unpickle(netconfig.data_ROOT+"/cifar-10-batches-py/data_batch_" + str(i))
         for j in range(len(raw[b'labels'])):
 
