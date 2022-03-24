@@ -20,9 +20,10 @@ pipeline = Compose([
 
 ])
 def augData():
+    print("data augment ...")
     augmented_samples = []
     augmented_labels = []
-    for i in range(1,6):
+    for i in range(1,2):
         raw = unpickle(netconfig.data_ROOT+"/cifar-10-batches-py/data_batch_" + str(i))
         for j in range(len(raw[b'labels'])):
 
@@ -34,16 +35,15 @@ def augData():
             tmp = origin_sample.reshape((32,32,3),order='F')
             rotate_img = Image.fromarray(tmp, mode="RGB").rotate(270)
             rotate_sample = np.array(rotate_img).reshape((3,32,32))/255
-            print(rotate_sample)
+
             augmented_samples.append(rotate_sample)
             augmented_labels.append(origin_label)
 
             for k in range(0,2):
                 new_sample = np.array(pipeline(rotate_img)).reshape((3,32,32))/255
-                print(new_sample)
                 augmented_samples.append(new_sample)
                 augmented_labels.append(origin_label)
-    print(augmented_samples[0])
+
     augmented_samples = np.array(augmented_samples)
     augmented_labels = np.array(augmented_labels)
     s = torch.Tensor(augmented_samples).float()

@@ -106,7 +106,7 @@ C1 = 64
 
 C = C1 * (2**np.arange(0, N, 1))  # channels in Residual Layer i
 
-F = [5, 5, 1]  # Conv. kernel size in Residual Layer i
+F = [5, 5, 3]  # Conv. kernel size in Residual Layer i
 
 # K Skip connection kernel size in Residual Layer i
 # P Average pool kernel size
