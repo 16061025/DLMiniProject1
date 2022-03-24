@@ -9,9 +9,11 @@ Python code is in the folder miniproject1.
 The template is in the folder report template. 
 
 ## How to run our program and train the model.
-$python main.py \[cuda\]
+$ cd miniproject1 \
+$ python main.py \[cuda\]
 
-    $python main.py [cuda]
+    $ cd miniproject1
+    $ python main.py [cuda]
     number of parameters 4891722
     Epoch 1
     -------------------------------
