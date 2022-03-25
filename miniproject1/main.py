@@ -58,21 +58,23 @@ def count_parameters(model):
     return sum(p.numel() for p in model.parameters() if p.requires_grad)
 
 
-if len(sys.argv) == 2:
-    print("device config")
-    if (sys.argv[1]=='cuda'):
-        netconfig.device = 'cuda'
-    else:
-        print("unknown device")
+if "cuda" in sys.argv:
+    netconfig.device = 'cuda'
 
 dp = dataprocessor.DataProcessor()
 
-train_dataloader, test_dataloader = dp.train_aug_dataloader, dp.test_dataloader
+if "aug" in sys.argv:
+    train_dataloader, test_dataloader = dp.train_aug_dataloader, dp.test_dataloader
+else:
+    train_dataloader, test_dataloader = dp.train_dataloader, dp.test_dataloader
 
 model = ResNetmodel.ResNet(ResNetmodel.BasicBlock).to(netconfig.device)
 loss_fn = torch.nn.CrossEntropyLoss()
 
-optimizer = torch.optim.Adam(model.parameters(), lr=netconfig.lr, weight_decay=1e-4)
+if "L2" in sys.argv:
+    optimizer = torch.optim.Adam(model.parameters(), lr=netconfig.lr, weight_decay=1e-4)
+else:
+    optimizer = torch.optim.Adam(model.parameters(), lr=netconfig.lr)
 
 print("number of parameters", count_parameters(model))
 
