@@ -64,9 +64,9 @@ if "cuda" in sys.argv:
 dp = dataprocessor.DataProcessor()
 
 if "aug" in sys.argv:
-    dp = dataprocessor.DataProcessor(aug=True)
+    dp = dataprocessor.DataProcessor(augment=True)
 else:
-    dp = dataprocessor.DataProcessor(aug=False)
+    dp = dataprocessor.DataProcessor(augment=False)
 
 train_dataloader, test_dataloader = dp.train_dataloader, dp.test_dataloader
 
