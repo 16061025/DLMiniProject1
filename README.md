@@ -15,9 +15,8 @@ $ python main.py \[cuda\] \[L2\] \[aug\]
 - L2    optimizer will add L2 regualarization, default no L2 
 - aug   the train data augment will be done, default no data augment
 
-
-    $ cd miniproject1
-    $ python main.py aug
+    $ cd miniproject1 \
+    $ python main.py aug \
     number of parameters 4891722
     Epoch 1
     -------------------------------
