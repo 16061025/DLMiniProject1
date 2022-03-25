@@ -64,9 +64,11 @@ if "cuda" in sys.argv:
 dp = dataprocessor.DataProcessor()
 
 if "aug" in sys.argv:
-    train_dataloader, test_dataloader = dp.train_aug_dataloader, dp.test_dataloader
+    dp = dataprocessor.DataProcessor(aug=True)
 else:
-    train_dataloader, test_dataloader = dp.train_dataloader, dp.test_dataloader
+    dp = dataprocessor.DataProcessor(aug=False)
+
+train_dataloader, test_dataloader = dp.train_dataloader, dp.test_dataloader
 
 model = ResNetmodel.ResNet(ResNetmodel.BasicBlock).to(netconfig.device)
 loss_fn = torch.nn.CrossEntropyLoss()
