@@ -13,7 +13,7 @@ $ cd miniproject1 \
 $ python main.py \[cuda\] \[L2\] \[aug\]  
 
 \- cuda  
-this option set the device, "cpu" is default  
+this option sets the device, "cpu" is default  
 \- L2  
 optimizer will add L2 regualarization, default no L2   
 \- aug  
