@@ -10,10 +10,14 @@ The template is in the folder report template.
 
 ## How to run our program and train the model.
 $ cd miniproject1 \
-$ python main.py \[cuda\]
+$ python main.py \[cuda\] \[L2\] \[aug\] 
+- cuda  this option set the device, "cpu" is default
+- L2    optimizer will add L2 regualarization, default no L2 
+- aug   the train data augment will be done, default no data augment
+
 
     $ cd miniproject1
-    $ python main.py [cuda]
+    $ python main.py aug
     number of parameters 4891722
     Epoch 1
     -------------------------------
