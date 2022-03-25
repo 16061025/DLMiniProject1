@@ -12,7 +12,7 @@ import aug
 
 class DataProcessor:
 
-    def __init__(self, aug=False):
+    def __init__(self, augment=False):
 
         data_ROOT = netconfig.data_ROOT
 
@@ -25,7 +25,7 @@ class DataProcessor:
                                      download=False,
                                      transform=data_transforms)
 
-        if(aug):
+        if(augment):
             self.train_data = aug.augData()
         else:
             self.train_data = datasets.CIFAR10(root=data_ROOT,
